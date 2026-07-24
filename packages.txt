@@ -38,6 +38,9 @@ opencode
 ollama
 
 # --- dev tools ---
+# rust provides cargo, which cli-tools-installer needs for its source fallbacks
+# (concord/siggy/slackatui/xleak/critique/... and the rust-opn step).
+rust
 cmake
 ninja
 python-pipx

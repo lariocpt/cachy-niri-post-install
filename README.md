@@ -77,6 +77,7 @@ zsh (+ autosuggestions, syntax-highlighting, history-substring-search), 7zip,
 zenith, fnm, npm, uv, rclone, opencode, ollama, yazi, jq.
 
 **Dev tools** (repo packages):
+rust (provides cargo — required by the cli-tools-installer source fallbacks),
 cmake, ninja, python-pipx, terraform, vulkan-tools, vulkan-headers,
 spirv-headers, python-huggingface-hub, linux-cachyos-headers.
 
