@@ -56,6 +56,59 @@ Then log out and pick the **Niri** session at the login screen. The display mana
 - **micro is the default editor**: `EDITOR`/`VISUAL=micro` exported in `.zshrc` +
   `.bashrc` (guarded block), and `git config --global core.editor micro`.
 
+## What gets installed (full application list)
+
+Mirrors `packages.txt`, `packages-aur.txt`, `bin-sync.txt` and the
+cli-tools-installer — update this section when those change.
+
+**Desktop shell — niri + Noctalia** (repo packages):
+niri, noctalia-shell, cachyos-niri-noctalia, xwayland-satellite, grim, slurp,
+swappy, wf-recorder, wl-clipboard, libnotify, ghostty, foot, fuzzel, swaybg,
+waybar, wdisplays, blueman.
+
+**GUI applications** (repo packages):
+brave-origin (`brave-origin-bin` — used by the ws1 startup layout), chromium,
+claude-desktop, freedownloadmanager, gimp, krita, gparted,
+intellij-idea-community-edition, libreoffice-fresh, onlyoffice-bin, mumble,
+smplayer, thunderbird, vscodium, warpinator, flatpak (+ flathub remote).
+
+**Terminal / CLI** (repo packages):
+zsh (+ autosuggestions, syntax-highlighting, history-substring-search), 7zip,
+zenith, fnm, npm, uv, rclone, opencode, ollama, yazi, jq.
+
+**Dev tools** (repo packages):
+cmake, ninja, python-pipx, terraform, vulkan-tools, vulkan-headers,
+spirv-headers, python-huggingface-hub, linux-cachyos-headers.
+
+**Virtualization / containers** (repo packages):
+virtualbox (+ host-dkms), qemu-system-x86, edk2-ovmf, virtiofsd; docker +
+docker-compose — or podman-compose instead if podman-docker is already present.
+
+**Printing** (repo packages):
+cups, cups-filters, cups-pdf, ghostscript, gsfonts, gutenprint, hplip,
+system-config-printer, the foomatic-db set, python-pyqt5, python-reportlab.
+
+**AUR** (via paru, which is itself installed if missing):
+slack-desktop-wayland (skipped when any slack package is present), rustdesk-bin.
+
+**npm** (user prefix `~/.local`): cline.
+
+**cli-tools-installer `--all`** — native: file, ffmpeg, ffmpegthumbnailer,
+resvg, poppler, imagemagick, chafa, fd, ripgrep, fzf, zoxide, broot, less,
+micro, tree, lynx, rtorrent, starship, glow, mdfried, doxx, xan; GitHub/cargo
+fallbacks when not in repos: xleak, lazyenv, gitui, concord, siggy, slackatui,
+carbonyl, csvi, gittop, harlequin, croft, qo, surge, pik, herdr, sigye,
+redthread, critique; plus the color-ghostty theme rotation + shell hook and
+yazi base config.
+
+**Bundled prebuilt binaries** (`bin/` → `~/.local/bin`, newer-wins; see
+`bin-sync.txt` for provenance): agy, color-kitty, croft, csv2gspread, dotstate,
+eget, endcord, gfold, hl, herdr, intelli-shell, lario-fleet,
+lario-gdrive-bisync, lla, llama-swap, marksman, micromamba, niricritty-record,
+niri-startup-workspaces (legacy), onecli, opn, pik, qo, redthread,
+secret-agent, sigye, slackatui, smartopen, splashboard, surge, termscp,
+toast-linux-amd64, tuime.
+
 ## Deliberate exclusions / conflict rules
 
 - Hardware/boot-specific: AMD ucode/graphics/ROCm, hhd (handheld daemon), GRUB/limine
@@ -64,8 +117,10 @@ Then log out and pick the **Niri** session at the login screen. The display mana
   podman-compose); only if neither exists is docker installed.
 - Slack: `slack-desktop-wayland` only when no slack package present (mini-mobile
   keeps `slack-desktop`; its extra flatpak Slack was intentionally not replicated).
-- Brave: machines already run `brave-origin-nightly-bin`; stable brave-origin-bin
-  from l-dev-ai was not replicated (duplicate browser).
+- Brave: stable `brave-origin-bin` (CachyOS repo) is the one browser variant this
+  bundle installs; the startup layout launches `brave-origin`. Nightly/beta
+  variants are not replicated — remove a machine-local nightly manually if you
+  don't want two.
 - l-dev-ai's python venv shims (flask, openai, huggingface-cli stubs, …), static
   2024 ffmpeg/ffprobe (would shadow repo ffmpeg), machine-local symlinks
   (llama.cpp builds, ncl, main-model), `ghostty`/`psql` wrapper scripts, MuseScore
