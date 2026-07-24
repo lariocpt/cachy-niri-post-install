@@ -41,7 +41,9 @@ Then log out and pick the **Niri** session at the login screen. The display mana
   and the **color-ghostty** theme rotation incl. its shell hook.
 - **Residual terminal apps** not covered by the installer (see `bin-sync.txt`):
   agy, endcord, termscp, marksman, micromamba, intelli-shell, splashboard, … →
-  `~/.local/bin` (`cp -u`, a newer local copy is never clobbered).
+  `~/.local/bin` (`cp -u`, a newer local copy is never clobbered). The binaries are
+  not in git — they live in the on-disk bundle and on the NFS share:
+  `/mnt/cachy-nfs/niri-post-setup/bin/` (server: `l-dev-ai:/srv/Lario.cachy-nfs`).
 - **App union** of mini-mobile + l-dev-ai (repo + AUR + `cline` via npm) — see
   `packages.txt` / `packages-aur.txt`.
 - **zsh + oh-my-zsh everywhere**: login shell set to zsh, omz plugins enriched to
