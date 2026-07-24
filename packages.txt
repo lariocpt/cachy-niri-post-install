@@ -56,6 +56,7 @@ edk2-ovmf
 virtiofsd
 
 # --- GUI apps ---
+brave-origin-bin
 chromium
 claude-desktop
 freedownloadmanager

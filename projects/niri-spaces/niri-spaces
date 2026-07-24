@@ -88,6 +88,9 @@ run_space_file() {
         env_vars=$(trim "${env_vars:-}")
         var_name=$(trim "${var_name:-}")
         { [ -z "$app_id" ] || [ -z "$cmd" ]; } && continue
+        if [ -n "$var_name" ]; then
+            eval "$var_name=\"\""
+        fi
 
         echo "   launching $app_id: $cmd"
         win_id=""

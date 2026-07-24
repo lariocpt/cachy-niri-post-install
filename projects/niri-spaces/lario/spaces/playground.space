@@ -17,7 +17,7 @@ google-chrome | google-chrome --profile-directory="Default" --new-window about:b
 sublime_text | flatpak run com.sublimehq.SublimeText | | sublime_id
 
 # Screen 2 - Right Column: Personal Brave (top) and Gram Editor (bottom)
-brave | brave --new-window about:blank | | brave_id
+brave | brave-origin --new-window about:blank | | brave_id
 app.liten.Gram | flatpak run app.liten.Gram | | gram_id
 
 # Position Screen 2

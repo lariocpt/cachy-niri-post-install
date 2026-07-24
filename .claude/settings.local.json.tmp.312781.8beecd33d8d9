@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//home/lario/.config/niri-spaces/spaces/**)",
+      "Read(//home/lario/.config/autostart/**)",
+      "Read(//mnt/data/Projects/niri-spaces/**)",
+      "Bash(bash -n post-install.sh)",
+      "Bash(bash -n projects/niri-spaces/niri-spaces)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)"
+    ]
+  }
+}

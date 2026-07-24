@@ -8,5 +8,5 @@ com.mitchellh.ghostty | ghostty --title="ws2-terminal" | | term_id
 firefox | firefox | | firefox_id
 
 # 50/50 side by side
-@action [ -n "$term_id" ] && niri msg action focus-window --id "$term_id" && niri msg action set-column-width "50%"
-@action [ -n "$firefox_id" ] && niri msg action focus-window --id "$firefox_id" && niri msg action set-column-width "50%"
+@action [ -n "${term_id:-}" ] && niri msg action focus-window --id "$term_id" && niri msg action set-column-width "50%"
+@action [ -n "${firefox_id:-}" ] && niri msg action focus-window --id "$firefox_id" && niri msg action set-column-width "50%"

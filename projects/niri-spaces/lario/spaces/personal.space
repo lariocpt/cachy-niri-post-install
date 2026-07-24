@@ -21,7 +21,7 @@ com.mitchellh.ghostty | ghostty --title="personal-broot" --working-directory="/h
 google-chrome | google-chrome --profile-directory="Default" --new-window about:blank | | chrome_id
 
 # Screen 2 - Right Column (50%): Personal Browser
-brave | brave --new-window about:blank | | brave_id
+brave | brave-origin --new-window about:blank | | brave_id
 
 # Position Screen 2
 @action [ -n "$chrome_id" ] && niri msg action focus-window --id "$chrome_id" && niri msg action set-column-width "50%"

@@ -189,6 +189,17 @@ true
 # -------------------------------------------------------- 7. dirs + services
 mkdir -p "$HOME/Pictures/Wallpapers" "$HOME/Pictures/Screenshots" "$HOME/Videos/Recordings"
 
+# Keep the CachyOS Hello popup from opening at every login: a user-level
+# autostart entry with Hidden=true overrides the system one in /etc/xdg/autostart.
+msg "disabling cachyos-hello autostart popup ..."
+mkdir -p "$HOME/.config/autostart"
+hello_desktop="$HOME/.config/autostart/cachyos-hello.desktop"
+if [ -f "$hello_desktop" ]; then
+    grep -q '^Hidden=true' "$hello_desktop" || sed -i '/^\[Desktop Entry\]/a Hidden=true' "$hello_desktop"
+else
+    printf '[Desktop Entry]\nType=Application\nName=CachyOS Hello\nHidden=true\n' > "$hello_desktop"
+fi
+
 msg "enabling printing (cups) ..."
 sudo systemctl enable --now cups.socket cups.service cups.path 2>/dev/null || warn "could not enable cups"
 if pacman -Q bluez >/dev/null 2>&1; then
