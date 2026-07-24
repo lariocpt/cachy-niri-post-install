@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+# Toggle screen recording with wf-recorder (interactive region or fullscreen).
+# Saves files to ~/Videos/Recordings/
+set -euo pipefail
+
+RECORD_DIR="$HOME/Videos/Recordings"
+FULLSCREEN=false
+
+# Check arguments
+for arg in "$@"; do
+    if [ "$arg" = "--fullscreen" ] || [ "$arg" = "-f" ]; then
+        FULLSCREEN=true
+    fi
+done
+
+if pgrep -x "wf-recorder" > /dev/null; then
+    # Stop recording gracefully
+    pkill -INT -x "wf-recorder"
+    notify-send -t 3000 "Screen Recorder" "Recording saved to $RECORD_DIR"
+else
+    # Create output directory
+    mkdir -p "$RECORD_DIR"
+    FILE="$RECORD_DIR/recording-$(date +%Y-%m-%d_%H-%M-%S).mp4"
+
+    if [ "$FULLSCREEN" = true ]; then
+        notify-send -t 2000 "Screen Recorder" "Recording fullscreen..."
+        wf-recorder -f "$FILE" >/dev/null 2>&1 &
+        notify-send -t 4000 "Screen Recorder" "Fullscreen recording started.\nPress any recorder key to stop."
+    else
+        notify-send -t 2000 "Screen Recorder" "Select a region to start recording..."
+        # Run slurp to get region
+        if GEOM="$(slurp)"; then
+            wf-recorder -g "$GEOM" -f "$FILE" >/dev/null 2>&1 &
+            notify-send -t 4000 "Screen Recorder" "Region recording started.\nPress any recorder key to stop."
+        else
+            notify-send -t 2000 "Screen Recorder" "Recording cancelled."
+        fi
+    fi
+fi

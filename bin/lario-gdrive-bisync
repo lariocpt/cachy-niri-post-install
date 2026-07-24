@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -euo pipefail
+FLAG="$HOME/.config/rclone/.lario-gdrive-resynced"
+if [ -f "$FLAG" ]; then EXTRA=""; else EXTRA="--resync"; fi
+rclone bisync 'gdrive:' '/srv/Lario.cachy-nfs/gdrive' --create-empty-src-dirs --resilient --conflict-resolve newer -v $EXTRA
+touch "$FLAG"

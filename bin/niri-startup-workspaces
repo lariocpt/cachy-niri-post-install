@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+# Populate two niri workspaces at session start: a ghostty terminal + a browser each.
+#   WS1: ghostty running zenith (system monitor) + brave-origin-nightly
+#   WS2: ghostty (plain shell)                    + chromium
+# Invoked from ~/.config/niri/cfg/autostart.kdl via spawn-at-startup.
+
+niri msg action focus-workspace 1
+niri msg action spawn -- ghostty -e zenith
+sleep 0.5
+niri msg action spawn -- brave-origin-nightly
+sleep 0.5
+
+niri msg action focus-workspace 2
+niri msg action spawn -- ghostty
+sleep 0.5
+niri msg action spawn -- chromium
+sleep 0.5
+
+niri msg action focus-workspace 1

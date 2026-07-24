@@ -1,0 +1,28 @@
+# Workspace Name
+@workspace personal
+
+# Screen 1 - Left Column (30%): Top Clock, Bottom Redthread (repo-scoped)
+com.mitchellh.ghostty | ghostty --title="personal-clock" -e tuime | | clock_id
+com.mitchellh.ghostty | ghostty --title="personal-redthread" -e redthread | XDG_DATA_HOME=/home/lario/.local/share/redthread_workspaces/personal | redthread_id
+
+# Screen 1 - Middle Column (33.3%): Slack
+com.slack.Slack | flatpak run com.slack.Slack | | slack_id
+
+# Screen 1 - Right Column (33.3%): Broot ~/Projects
+com.mitchellh.ghostty | ghostty --title="personal-broot" --working-directory="/home/lario/Projects" -e broot | | broot_id
+
+# Position Screen 1
+@action [ -n "$clock_id" ] && [ -n "$redthread_id" ] && niri msg action focus-window --id "$clock_id" && niri msg action consume-window-into-column && niri msg action set-column-width "30%"
+@action [ -n "$slack_id" ] && niri msg action focus-window --id "$slack_id" && niri msg action set-column-width "33.3%"
+@action [ -n "$broot_id" ] && niri msg action focus-window --id "$broot_id" && niri msg action set-column-width "33.3%"
+
+
+# Screen 2 - Left Column (50%): Work Browser
+google-chrome | google-chrome --profile-directory="Default" --new-window about:blank | | chrome_id
+
+# Screen 2 - Right Column (50%): Personal Browser
+brave | brave --new-window about:blank | | brave_id
+
+# Position Screen 2
+@action [ -n "$chrome_id" ] && niri msg action focus-window --id "$chrome_id" && niri msg action set-column-width "50%"
+@action [ -n "$brave_id" ] && niri msg action focus-window --id "$brave_id" && niri msg action set-column-width "50%"

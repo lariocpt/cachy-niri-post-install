@@ -1,0 +1,88 @@
+#!/usr/bin/env bash
+
+# If executed with --popup, launch a new ghostty window running this script natively
+if [ "$1" == "--popup" ]; then
+    exec ghostty -e "$0"
+fi
+
+if [ "$1" == "--vision" ]; then
+    notify-send "Lario Fleet" "Select region to send to an agent..."
+    TARGET_REGION=$(slurp)
+    if [ -z "$TARGET_REGION" ]; then exit 1; fi
+    TMP_IMG="/tmp/lario_fleet_snap.png"
+    grim -g "$TARGET_REGION" "$TMP_IMG"
+    
+    # Launch self in terminal to show agent menu
+    exec ghostty -e "$0" "--process-vision" "$TMP_IMG"
+fi
+
+if [ "$1" == "--text" ]; then
+    SELECTED_TEXT=$(wl-paste --primary)
+    if [ -z "$SELECTED_TEXT" ]; then
+        SELECTED_TEXT=$(wl-paste)
+        if [ -z "$SELECTED_TEXT" ]; then
+            notify-send "Lario Fleet" "No text selected in clipboard."
+            exit 1
+        fi
+    fi
+    TMP_TXT="/tmp/lario_fleet_text.txt"
+    echo "$SELECTED_TEXT" > "$TMP_TXT"
+    exec ghostty -e "$0" "--process-text" "$TMP_TXT"
+fi
+
+# Gather list of running agents
+echo "Querying local agent fleet..."
+AGENTS=$(docker ps --format '{{.Names}}' | grep '^hermes-.*-agent$')
+if [ -z "$AGENTS" ]; then
+    echo "No Hermes agents found running in Docker."
+    sleep 3
+    exit 1
+fi
+
+echo ""
+echo "====================================="
+echo "        LARIO'S AGENT FLEET          "
+echo "====================================="
+echo "Select an agent to communicate with:"
+
+# Use select to create a menu
+select AGENT in $AGENTS; do
+    if [ -n "$AGENT" ]; then
+        break
+    fi
+    echo "Invalid selection."
+done
+
+echo ""
+echo "Connecting to $AGENT..."
+
+if [ "$1" == "--process-vision" ]; then
+    TMP_IMG="$2"
+    echo "Uploading image to $AGENT..."
+    docker cp "$TMP_IMG" "$AGENT:/tmp/snap.png"
+    echo "Sending prompt and waiting for initial analysis..."
+    
+    # Run the query and then resume the session interactively!
+    docker exec -it "$AGENT" /opt/hermes/bin/hermes chat -q "Analyze this image from my screen:" --image /tmp/snap.png
+    
+    echo "----------------------------------------"
+    echo "Dropping into interactive chat mode..."
+    docker exec -it "$AGENT" /opt/hermes/bin/hermes chat -c
+
+elif [ "$1" == "--process-text" ]; then
+    TMP_TXT="$2"
+    echo "Uploading text clipboard to $AGENT..."
+    docker cp "$TMP_TXT" "$AGENT:/tmp/clip.txt"
+    echo "Sending text payload and waiting for initial response..."
+    
+    # Run query with file content
+    docker exec -it "$AGENT" bash -c '/opt/hermes/bin/hermes chat -q "Here is a text snippet from my clipboard: $(cat /tmp/clip.txt)"'
+    
+    echo "----------------------------------------"
+    echo "Dropping into interactive chat mode..."
+    docker exec -it "$AGENT" /opt/hermes/bin/hermes chat -c
+
+else
+    # Just open an interactive session directly
+    docker exec -it "$AGENT" /opt/hermes/bin/hermes chat
+fi

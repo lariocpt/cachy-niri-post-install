@@ -1,0 +1,4 @@
+# AUR packages, one per line. slack-desktop-wayland is skipped automatically if
+# another slack package is already installed (see post-install.sh).
+slack-desktop-wayland
+rustdesk-bin

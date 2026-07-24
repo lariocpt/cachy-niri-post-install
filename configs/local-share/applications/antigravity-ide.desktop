@@ -1,0 +1,18 @@
+[Desktop Entry]
+Type=Application
+Name=Antigravity IDE
+GenericName=Code Editor
+Comment=Antigravity IDE
+Exec="/home/lario/Applications/Antigravity IDE/antigravity-ide" %F
+Icon=/home/lario/Applications/Antigravity IDE/resources/app/resources/linux/code.png
+Terminal=false
+Categories=Development;IDE;TextEditor;
+StartupWMClass=antigravity-ide
+StartupNotify=true
+MimeType=text/plain;inode/directory;
+Actions=new-empty-window;
+
+[Desktop Action new-empty-window]
+Name=New Empty Window
+Exec="/home/lario/Applications/Antigravity IDE/antigravity-ide" --new-window %F
+Icon=/home/lario/Applications/Antigravity IDE/resources/app/resources/linux/code.png

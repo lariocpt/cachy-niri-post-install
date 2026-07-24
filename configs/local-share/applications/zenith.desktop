@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Zenith
+Comment=Zenith system monitor
+Exec=zenith
+Icon=/usr/share/pixmaps/zenith.png
+Terminal=true
+Type=Application
+Categories=System;Monitor;
+StartupNotify=true

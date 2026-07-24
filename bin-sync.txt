@@ -1,0 +1,35 @@
+# bin-sync.txt — provenance of bundled ~/.local/bin binaries (2026-07-24)
+# All from l-dev-ai:~/.local/bin unless noted. Deployed with cp -u (newer-wins).
+agy                          181M  l-dev-ai:~/.local/bin
+color-kitty                  4.0K  l-dev-ai:~/.local/bin
+croft                        9.8M  l-dev-ai:~/.cargo/bin (custom cargo builds)
+csv2gspread                  4.0K  l-dev-ai:~/.local/bin
+dotstate                      24M  l-dev-ai:~/.local/bin
+eget                         6.2M  l-dev-ai:~/.local/bin
+endcord                       51M  l-dev-ai:~/.local/bin
+gfold                        1.9M  l-dev-ai:~/.local/bin
+hl                           9.8M  l-dev-ai:~/.local/bin
+intelli-shell                 31M  l-dev-ai:~/.local/bin
+lario-fleet                  4.0K  l-dev-ai:~/.local/bin
+lario-gdrive-bisync          4.0K  l-dev-ai:~/.local/bin
+lla                          8.3M  l-dev-ai:~/.local/bin
+llama-swap                    18M  l-dev-ai:~/.local/bin
+marksman                      22M  l-dev-ai:~/.local/bin
+micromamba                    18M  l-dev-ai:~/.local/bin
+niricritty-record            4.0K  l-dev-ai:~/.local/bin
+niri-startup-workspaces      4.0K  cachyos-mini-mobile:~/.local/bin (legacy, unused — superseded by niri-spaces)
+onecli                       8.1M  l-dev-ai:~/.local/bin
+pik                          6.8M  l-dev-ai:~/.cargo/bin (custom cargo builds)
+qo                           436K  l-dev-ai:~/.cargo/bin (custom cargo builds)
+secret-agent                  12M  l-dev-ai:~/.local/bin
+sigye                         13M  l-dev-ai:~/.cargo/bin (custom cargo builds)
+slackatui                     24M  l-dev-ai:~/.cargo/bin (custom cargo builds)
+splashboard                   24M  l-dev-ai:~/.local/bin
+termscp                       52M  l-dev-ai:~/.local/bin
+toast-linux-amd64             18M  l-dev-ai:~/.local/bin
+tuime                        2.2M  l-dev-ai:~/.local/bin
+opn                          2.6M  l-dev-ai:~/.local/bin (rust-opn; installer step 25 not wired)
+smartopen                    2.6M  l-dev-ai:~/.local/bin (rust-opn companion)
+herdr                         15M  l-dev-ai:~/.local/bin (pre-seeded so installer's cargo fallback is skipped)
+redthread                    5.6M  l-dev-ai:~/.local/bin (pre-seeded so installer's cargo fallback is skipped)
+surge                         20M  l-dev-ai:~/.local/bin (pre-seeded so installer's cargo fallback is skipped)

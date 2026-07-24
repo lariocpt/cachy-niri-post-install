@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=Antigravity
+GenericName=Antigravity
+Comment=Antigravity
+Exec="/home/lario/Applications/Antigravity/antigravity" %U
+Icon=/home/lario/Applications/Antigravity/icon.png
+Terminal=false
+Categories=Development;Utility;
+StartupWMClass=antigravity
+StartupNotify=true

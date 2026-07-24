@@ -1,0 +1,33 @@
+# Workspace Name
+@workspace T2 Mono $1
+
+# Screen 1 - Column 1 (33.3%): Clock (top) and Redthread (bottom)
+com.mitchellh.ghostty | ghostty --title="t2-mono-$1-clock" -e tuime | | clock_id
+com.mitchellh.ghostty | ghostty --title="t2-mono-$1-redthread" -e redthread | XDG_DATA_HOME=/home/lario/.local/share/redthread_workspaces/t2-mono-$1 | redthread_id
+
+# Screen 1 - Column 2 (33.3%): Croft at repo root
+com.mitchellh.ghostty | ghostty --title="t2-mono-$1-croft" --working-directory="/home/lario/timbuk2/t2-mono-$1" -e croft | | croft_id
+
+# Screen 1 - Column 3 (33.3%): Marketing (top) and Insight (bottom) terminals
+com.mitchellh.ghostty | ghostty --title="t2-mono-$1-marketing" --working-directory="/home/lario/timbuk2/t2-mono-$1/submodules/app-timbuk2-marketing" | | marketing_id
+com.mitchellh.ghostty | ghostty --title="t2-mono-$1-insight" --working-directory="/home/lario/timbuk2/t2-mono-$1/submodules/api-timbuk2-insight-engine" | | insight_id
+
+# Position Screen 1
+@action [ -n "$clock_id" ] && [ -n "$redthread_id" ] && niri msg action focus-window --id "$clock_id" && niri msg action consume-window-into-column && niri msg action set-column-width "33.3%"
+@action [ -n "$croft_id" ] && niri msg action focus-window --id "$croft_id" && niri msg action set-column-width "33.3%"
+@action [ -n "$marketing_id" ] && [ -n "$insight_id" ] && niri msg action focus-window --id "$marketing_id" && niri msg action consume-window-into-column && niri msg action set-column-width "33.3%"
+
+
+# Screen 2 - Column 1 (33.3%): Broot at repo root
+com.mitchellh.ghostty | ghostty --title="t2-mono-$1-broot" --working-directory="/home/lario/timbuk2/t2-mono-$1" -e broot | | broot_id
+
+# Screen 2 - Column 2 (33.3%): Work Chrome
+google-chrome | google-chrome --profile-directory="Default" --new-window about:blank | | chrome_id
+
+# Screen 2 - Column 3 (33.3%): Gram Editor
+app.liten.Gram | flatpak run app.liten.Gram /home/lario/timbuk2/t2-mono-$1 | | gram_id
+
+# Position Screen 2
+@action [ -n "$broot_id" ] && niri msg action focus-window --id "$broot_id" && niri msg action set-column-width "33.3%"
+@action [ -n "$chrome_id" ] && niri msg action focus-window --id "$chrome_id" && niri msg action set-column-width "33.3%"
+@action [ -n "$gram_id" ] && niri msg action focus-window --id "$gram_id" && niri msg action set-column-width "33.3%"

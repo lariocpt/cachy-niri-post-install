@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+# Picks a random, highly distinct Ghostty theme and applies it globally.
+# Vendored by cli-tools-installer (originally from the niricritty distro). The theme
+# names are Ghostty's built-in themes, so this is portable across distributions.
+
+THEMES=(
+    "Catppuccin Mocha"
+    "Catppuccin Latte"
+    "Dracula"
+    "Solarized Light"
+    "Solarized Dark Patched"
+    "Monokai Pro"
+    "Gruvbox Light"
+    "Gruvbox Dark"
+    "Nord"
+    "Cyberpunk"
+    "Rose Pine Dawn"
+    "Rose Pine Moon"
+    "TokyoNight"
+    "Synthwave Everything"
+    "Ayu Light"
+    "Ayu Mirage"
+    "Batman"
+    "Matrix"
+    "Zenbones"
+    "Alabaster"
+    "Neon"
+    "Fairyfloss"
+    "C64"
+    "Hot Dog Stand"
+)
+
+STATE_FILE="${XDG_CACHE_HOME:-$HOME/.cache}/ghostty_theme_history"
+mkdir -p "$(dirname "$STATE_FILE")"
+touch "$STATE_FILE"
+
+# Get last 5 themes to avoid repeating them recently
+LAST_THEMES=$(tail -n 5 "$STATE_FILE" 2>/dev/null || true)
+
+# Filter THEMES to only those not in LAST_THEMES
+AVAILABLE=()
+for t in "${THEMES[@]}"; do
+    if ! echo "$LAST_THEMES" | grep -qx "$t"; then
+        AVAILABLE+=("$t")
+    fi
+done
+
+# If available is empty (shouldn't happen with 24 themes and 5 history), fallback
+if [ ${#AVAILABLE[@]} -eq 0 ]; then
+    AVAILABLE=("${THEMES[@]}")
+fi
+
+# Pick random
+PICK="${AVAILABLE[$RANDOM % ${#AVAILABLE[@]}]}"
+
+# Update history
+echo "$PICK" >> "$STATE_FILE"
+tail -n 5 "$STATE_FILE" > "$STATE_FILE.tmp"
+mv "$STATE_FILE.tmp" "$STATE_FILE"
+
+# Apply to ghostty config
+CONFIG_FILE="${XDG_CONFIG_HOME:-$HOME/.config}/ghostty/config"
+mkdir -p "$(dirname "$CONFIG_FILE")"
+
+if grep -q "^theme =" "$CONFIG_FILE" 2>/dev/null; then
+    sed -i "s/^theme =.*/theme = $PICK/" "$CONFIG_FILE"
+else
+    echo "theme = $PICK" >> "$CONFIG_FILE"
+fi

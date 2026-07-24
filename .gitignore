@@ -1,0 +1,12 @@
+# Large prebuilt binaries are NOT in git (GitHub rejects >100MB files; agy alone
+# is 181MB). They live only in the on-disk bundle and reach other machines via
+# deploy-to.sh (rsync). See bin-sync.txt for the full manifest + provenance.
+bin/*
+
+# ... except the small user scripts, which are code and belong in git:
+!bin/color-kitty
+!bin/csv2gspread
+!bin/lario-fleet
+!bin/lario-gdrive-bisync
+!bin/niricritty-record
+!bin/niri-startup-workspaces

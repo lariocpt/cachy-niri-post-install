@@ -1,0 +1,31 @@
+# Workspace Name
+@workspace system
+
+# Screen 1 - Column 1 (33.3%): Zenith
+com.mitchellh.ghostty | ghostty --title="system-zenith" -e zenith | | zenith_id
+
+# Screen 1 - Column 2 (33.3%): Harlequin
+com.mitchellh.ghostty | ghostty --title="system-harlequin" -e harlequin | | harlequin_id
+
+# Screen 1 - Column 3 (33.3%): Chrome Work
+google-chrome | google-chrome --profile-directory="Default" --new-window about:blank | | chrome_id
+
+# Position Screen 1
+@action [ -n "$zenith_id" ] && niri msg action focus-window --id "$zenith_id" && niri msg action set-column-width "33.3%"
+@action [ -n "$harlequin_id" ] && niri msg action focus-window --id "$harlequin_id" && niri msg action set-column-width "33.3%"
+@action [ -n "$chrome_id" ] && niri msg action focus-window --id "$chrome_id" && niri msg action set-column-width "33.3%"
+
+
+# Screen 2 - Column 1 (33.3%): Broot open at ~
+com.mitchellh.ghostty | ghostty --title="system-broot" --working-directory="/home/lario" -e broot | | broot_id
+
+# Screen 2 - Column 2 (33.3%): Terminal open at root
+com.mitchellh.ghostty | ghostty --title="system-terminal" --working-directory="/" | | terminal_id
+
+# Screen 2 - Column 3 (33.3%): Gram Editor
+app.liten.Gram | flatpak run app.liten.Gram | | gram_id
+
+# Position Screen 2
+@action [ -n "$broot_id" ] && niri msg action focus-window --id "$broot_id" && niri msg action set-column-width "33.3%"
+@action [ -n "$terminal_id" ] && niri msg action focus-window --id "$terminal_id" && niri msg action set-column-width "33.3%"
+@action [ -n "$gram_id" ] && niri msg action focus-window --id "$gram_id" && niri msg action set-column-width "33.3%"

@@ -1,0 +1,25 @@
+# Workspace Name
+@workspace playground
+
+# Screen 1 - Left Column: Clock (top) and Computer Splash (bottom)
+com.mitchellh.ghostty | ghostty --title="playground-clock" -e tuime | | clock_id
+com.mitchellh.ghostty | ghostty --title="playground-splash" -e bash -c "space-splash /home/lario; exec zsh" | | splash_id
+
+# Screen 1 - Right Column: Work Chrome
+google-chrome | google-chrome --profile-directory="Default" --new-window about:blank | | chrome_id
+
+# Position Screen 1
+@action [ -n "$clock_id" ] && [ -n "$splash_id" ] && niri msg action focus-window --id "$clock_id" && niri msg action consume-window-into-column && niri msg action set-column-width "50%"
+@action [ -n "$chrome_id" ] && niri msg action focus-window --id "$chrome_id" && niri msg action set-column-width "50%"
+
+
+# Screen 2 - Left Column: Sublime Text
+sublime_text | flatpak run com.sublimehq.SublimeText | | sublime_id
+
+# Screen 2 - Right Column: Personal Brave (top) and Gram Editor (bottom)
+brave | brave --new-window about:blank | | brave_id
+app.liten.Gram | flatpak run app.liten.Gram | | gram_id
+
+# Position Screen 2
+@action [ -n "$sublime_id" ] && niri msg action focus-window --id "$sublime_id" && niri msg action set-column-width "50%"
+@action [ -n "$brave_id" ] && [ -n "$gram_id" ] && niri msg action focus-window --id "$brave_id" && niri msg action consume-window-into-column && niri msg action set-column-width "50%"

@@ -1,0 +1,22 @@
+# yazi base config — managed by cli-tools-installer.
+#
+# This installer owns ONLY the [mgr] and [preview] sections (manager view + image
+# rendering). The companion `yazi-opener-config` app owns [opener] and [open]
+# (file-type -> viewer associations). Each tool leaves the other's sections alone.
+#
+# Image/preview backends are auto-detected from installed tools:
+#   images           -> ghostty graphics protocol (built-in) + imagemagick (heic/jxl/fonts)
+#   video thumbnails -> ffmpeg / ffmpegthumbnailer
+#   SVG              -> resvg        PDF -> poppler
+#   archives         -> 7zip         JSON -> jq
+# Run yazi inside ghostty (no tmux) so the graphics protocol renders previews inline.
+
+[mgr]
+show_hidden = false
+sort_dir_first = true
+
+[preview]
+max_width = 1200
+max_height = 1200
+image_filter = "lanczos3"
+image_quality = 90

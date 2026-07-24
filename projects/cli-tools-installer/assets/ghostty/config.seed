@@ -1,0 +1,4 @@
+# Seeded by cli-tools-installer so the first interactive shell has a valid ghostty
+# config before `color-ghostty` rewrites the theme. Edit freely — color-ghostty only
+# ever updates the `theme =` line below (it leaves the rest of this file untouched).
+theme = Catppuccin Mocha

@@ -1,0 +1,11 @@
+# backups created by the installer when overwriting user files
+*.bak
+*.bak-*
+*.tmp
+*.tmp-*
+
+# scratch / throwaway test homes
+scratch/
+.test-home/
+
+.DS_Store

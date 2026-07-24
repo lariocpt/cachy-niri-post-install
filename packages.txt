@@ -1,0 +1,91 @@
+# Union of cachyos-mini-mobile + l-dev-ai app sets, minus hardware/boot-specific
+# packages. One package per line; '#' comments ignored.
+# Docker/podman and slack are handled dynamically by post-install.sh (see there).
+
+# --- niri + noctalia desktop ---
+niri
+noctalia-shell
+cachyos-niri-noctalia
+xwayland-satellite
+grim
+slurp
+swappy
+wf-recorder
+wl-clipboard
+zsh
+zsh-autosuggestions
+zsh-syntax-highlighting
+zsh-history-substring-search
+libnotify
+ghostty
+yazi
+jq
+foot
+fuzzel
+swaybg
+waybar
+wdisplays
+blueman
+
+# --- terminal / CLI ---
+7zip
+zenith
+fnm
+npm
+uv
+rclone
+opencode
+ollama
+
+# --- dev tools ---
+cmake
+ninja
+python-pipx
+terraform
+vulkan-tools
+vulkan-headers
+spirv-headers
+python-huggingface-hub
+linux-cachyos-headers
+
+# --- virtualization ---
+virtualbox
+virtualbox-host-dkms
+qemu-system-x86
+edk2-ovmf
+virtiofsd
+
+# --- GUI apps ---
+chromium
+claude-desktop
+freedownloadmanager
+gimp
+krita
+gparted
+intellij-idea-community-edition
+libreoffice-fresh
+onlyoffice-bin
+mumble
+smplayer
+thunderbird
+vscodium
+warpinator
+flatpak
+
+# --- printing stack ---
+cups
+cups-filters
+cups-pdf
+ghostscript
+gsfonts
+gutenprint
+hplip
+system-config-printer
+foomatic-db
+foomatic-db-engine
+foomatic-db-ppds
+foomatic-db-nonfree
+foomatic-db-nonfree-ppds
+foomatic-db-gutenprint-ppds
+python-pyqt5
+python-reportlab
