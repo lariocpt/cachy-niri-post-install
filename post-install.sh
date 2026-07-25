@@ -275,8 +275,23 @@ for f in home.dashboard.toml project.dashboard.toml; do
 done
 [ -f "$HOME/.splashboard/settings.toml" ] \
     || install -m0644 "$BUNDLE/configs/splashboard/settings.toml" "$HOME/.splashboard/settings.toml"
-command -v splashboard >/dev/null \
-    || warn "splashboard binary not on PATH — splash renders once bin-sync provides it"
+# The binary normally arrives via bundle bin/ (step 4) or cli-tools-installer
+# (step 5, GitHub release fetch). Older deployed installers predate that fetch,
+# so grab it directly as a last resort — the splash must work after this run.
+if ! command -v splashboard >/dev/null; then
+    msg "splashboard binary missing — fetching from GitHub releases ..."
+    _sburl=$(curl -fsSL https://api.github.com/repos/unhappychoice/splashboard/releases/latest 2>/dev/null \
+        | grep browser_download_url | grep -E 'splashboard-.*x86_64-unknown-linux-gnu\.tar\.gz"' \
+        | grep -v sha256 | cut -d'"' -f4 | head -1)
+    _sbtmp=$(mktemp -d)
+    if [ -n "$_sburl" ] && curl -fsSL "$_sburl" | tar xz -C "$_sbtmp" 2>/dev/null; then
+        _sbbin=$(find "$_sbtmp" -type f -name splashboard | head -1)
+        [ -n "$_sbbin" ] && install -m0755 "$_sbbin" "$HOME/.local/bin/splashboard"
+    fi
+    rm -rf "$_sbtmp"
+    command -v splashboard >/dev/null \
+        || warn "could not fetch splashboard — splash renders once it's installed (rerun, or copy from bundle bin/)"
+fi
 
 SPMARK="# >>> splashboard >>>"
 if [ -f "$HOME/.zshrc" ] && ! grep -qF "$SPMARK" "$HOME/.zshrc"; then

@@ -143,6 +143,13 @@ if need gitui; then
     fetch_github_binary extrawurst/gitui 'gitui-linux-x86_64\.tar\.gz"' xz gitui gitui \
         || warn "gitui unavailable (fallback failed)"
 fi
+# splashboard — terminal splash dashboard (machine banner at home, git info in
+# repos); the dashboards + zshrc hook are wired by post-install.sh.
+if need splashboard; then
+    fetch_github_binary unhappychoice/splashboard 'splashboard-.*x86_64-unknown-linux-gnu\.tar\.gz"' xz splashboard splashboard \
+        || cargo_install_try --git https://github.com/unhappychoice/splashboard \
+        || warn "splashboard unavailable (fallback failed)"
+fi
 
 # --- terminal messaging clients (TUI replacements for the GUI apps; niche, in no repo) ---
 # concord -> Discord TUI
