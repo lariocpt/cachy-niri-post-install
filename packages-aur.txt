@@ -2,3 +2,4 @@
 # another slack package is already installed (see post-install.sh).
 slack-desktop-wayland
 rustdesk-bin
+beekeeper-studio-bin
