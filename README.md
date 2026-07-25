@@ -59,6 +59,13 @@ Then log out and pick the **Niri** session at the login screen. The display mana
   `~/.local/share`; entries whose app isn't present on a machine are skipped.
 - **micro is the default editor**: `EDITOR`/`VISUAL=micro` exported in `.zshrc` +
   `.bashrc` (guarded block), and `git config --global core.editor micro`.
+- **splashboard terminal splash**: machine-name banner on new shells at home,
+  local git info (branch/status + recent commits) inside repos. Dashboards
+  deploy from `configs/splashboard/` to `~/.splashboard/` and a guarded
+  `eval "$(splashboard init zsh)"` block is added to `.zshrc`. The banner text
+  is the one per-machine difference — prompted at the start of the run
+  ("Cachy AI" / "Big Cachy" / "Mini Cachy"), reusing the already-configured
+  name as the default on reruns; non-interactive runs take `SPLASH_NAME=...`.
 
 ## What gets installed (full application list)
 

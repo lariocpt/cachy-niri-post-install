@@ -10,7 +10,8 @@
 #   4. deploy bin/ -> ~/.local/bin (cp -u, newer wins)
 #   5. deploy projects/ -> ~/Projects, build nosleep, run cli-tools-installer
 #      --all + niri-spaces
-#   6. backup + deploy configs (niri, noctalia, niri-spaces)
+#   6. backup + deploy configs (niri, noctalia, niri-spaces) + splashboard
+#      terminal splash (banner text prompted at the start of the run)
 
 #   7. create standard dirs, enable cups/bluetooth, flathub remote
 #   8. zsh + oh-my-zsh plugins as login shell; remove alacritty + fish stack
@@ -30,6 +31,25 @@ command -v pacman >/dev/null || die "pacman not found — this script is for Arc
 
 msg "requesting sudo up front ..."
 sudo -v || die "sudo required"
+
+# ------------------------------------------------ 0. per-machine questions
+# Splashboard banner: the only per-machine difference in the terminal splash
+# ("Cachy AI" / "Big Cachy" / "Mini Cachy"). Asked up front so the rest of the
+# run is unattended. Non-interactive runs: set SPLASH_NAME=... in the env;
+# otherwise the banner already configured on this machine (or "Cachy AI") is kept.
+SPLASH_DEFAULT="Cachy AI"
+if [ -f "$HOME/.splashboard/home.dashboard.toml" ]; then
+    _cur=$(awk -F'"' '/^id = "hero"$/{h=1} h && /^format = /{print $2; exit}' \
+        "$HOME/.splashboard/home.dashboard.toml")
+    [ -n "$_cur" ] && SPLASH_DEFAULT="$_cur"
+fi
+if [ -z "${SPLASH_NAME:-}" ]; then
+    if [ -t 0 ]; then
+        read -r -p "Terminal splash banner for this machine [$SPLASH_DEFAULT]: " SPLASH_NAME
+    fi
+    SPLASH_NAME="${SPLASH_NAME:-$SPLASH_DEFAULT}"
+fi
+msg "splash banner: $SPLASH_NAME"
 
 # ---------------------------------------------------------------- 1. packages
 read_list() { grep -vE '^\s*(#|$)' "$1"; }
@@ -234,6 +254,41 @@ done
 command -v update-desktop-database >/dev/null && update-desktop-database "$HOME/.local/share/applications" 2>/dev/null
 command -v gtk-update-icon-cache >/dev/null && gtk-update-icon-cache -q -t "$HOME/.local/share/icons/hicolor" 2>/dev/null
 true
+
+# Splashboard: terminal splash — machine-name banner at home, local git info
+# (branch/status + recent commits) inside repos. Identical config on every
+# machine; only the banner text differs (prompted at the top of this script).
+# Changed dashboards are backed up alongside as .bak-$STAMP; settings.toml is
+# user preferences and only seeded when missing.
+msg "deploying splashboard dashboards (banner: $SPLASH_NAME) ..."
+mkdir -p "$HOME/.splashboard"
+_esc=$(printf '%s' "$SPLASH_NAME" | sed 's/[&/\]/\\&/g')
+for f in home.dashboard.toml project.dashboard.toml; do
+    _tmp=$(mktemp)
+    sed "s/@@SPLASH_NAME@@/$_esc/" "$BUNDLE/configs/splashboard/$f" > "$_tmp"
+    if [ -f "$HOME/.splashboard/$f" ] && cmp -s "$_tmp" "$HOME/.splashboard/$f"; then
+        rm -f "$_tmp"; continue
+    fi
+    [ -f "$HOME/.splashboard/$f" ] && cp -a "$HOME/.splashboard/$f" "$HOME/.splashboard/$f.bak-$STAMP"
+    install -m0644 "$_tmp" "$HOME/.splashboard/$f"
+    rm -f "$_tmp"
+done
+[ -f "$HOME/.splashboard/settings.toml" ] \
+    || install -m0644 "$BUNDLE/configs/splashboard/settings.toml" "$HOME/.splashboard/settings.toml"
+command -v splashboard >/dev/null \
+    || warn "splashboard binary not on PATH — splash renders once bin-sync provides it"
+
+SPMARK="# >>> splashboard >>>"
+if [ -f "$HOME/.zshrc" ] && ! grep -qF "$SPMARK" "$HOME/.zshrc"; then
+    msg "wiring splashboard into .zshrc ..."
+    cat >> "$HOME/.zshrc" <<'SPRC'
+
+# >>> splashboard >>>
+# Splash on new shells and on cd into a project. Safe to remove.
+command -v splashboard >/dev/null && eval "$(splashboard init zsh)"
+# <<< splashboard <<<
+SPRC
+fi
 
 # -------------------------------------------------------- 7. dirs + services
 mkdir -p "$HOME/Pictures/Wallpapers" "$HOME/Pictures/Screenshots" "$HOME/Videos/Recordings"
