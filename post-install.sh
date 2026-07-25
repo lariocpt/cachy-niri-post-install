@@ -8,7 +8,8 @@
 #   2. AUR packages (packages-aur.txt) via paru, slack conflict handling
 #   3. cline CLI via npm (user prefix ~/.local)
 #   4. deploy bin/ -> ~/.local/bin (cp -u, newer wins)
-#   5. deploy projects/ -> ~/Projects, run cli-tools-installer --all + niri-spaces
+#   5. deploy projects/ -> ~/Projects, build nosleep, run cli-tools-installer
+#      --all + niri-spaces
 #   6. backup + deploy configs (niri, noctalia, niri-spaces)
 
 #   7. create standard dirs, enable cups/bluetooth, flathub remote
@@ -60,6 +61,19 @@ if ! pacman -Q cachyos-niri-noctalia >/dev/null 2>&1; then
             sudo pacman -Rns --noconfirm "$provider" || warn "could not remove $provider — cachyos-niri-noctalia will fail to install"
         done < <(pacman -Qi "${SETTINGS_PKGS[@]}" 2>/dev/null | awk '/^Name/{n=$3} /^Provides/ && /cachyos-desktop-settings/ && n!="cachyos-niri-noctalia" {print n}')
     fi
+fi
+
+# VirtualBox rule: we standardize on the dkms host modules (they rebuild for the
+# cachyos kernel). virtualbox-host-modules-arch conflicts with virtualbox-host-dkms;
+# with --noconfirm the "Remove virtualbox-host-modules-arch?" prompt auto-answers
+# "No" and sinks the whole batch, so swap it out first. -Rdd because virtualbox
+# itself depends on VIRTUALBOX-HOST-MODULES — the dkms package restores the
+# provider moments later in the batch install.
+if pacman -Q virtualbox-host-modules-arch >/dev/null 2>&1 \
+   && ! pacman -Q virtualbox-host-dkms >/dev/null 2>&1; then
+    msg "replacing virtualbox-host-modules-arch with virtualbox-host-dkms ..."
+    sudo pacman -Rdd --noconfirm virtualbox-host-modules-arch \
+        || warn "could not remove virtualbox-host-modules-arch — virtualbox-host-dkms will fail to install"
 fi
 
 msg "installing ${#PKGS[@]} repo packages (pacman --needed) ..."
@@ -138,8 +152,28 @@ if [ ! -d "$HOME/Projects/niri-spaces" ]; then
 else
     msg "updating niri-spaces CLI + layouts in ~/Projects/niri-spaces"
     cp "$BUNDLE/projects/niri-spaces/niri-spaces" "$HOME/Projects/niri-spaces/niri-spaces"
+    cp "$BUNDLE/projects/niri-spaces/install.sh"  "$HOME/Projects/niri-spaces/install.sh"
     cp "$BUNDLE/projects/niri-spaces/autostart"   "$HOME/Projects/niri-spaces/autostart"
     cp "$BUNDLE/projects/niri-spaces/spaces/"*.space "$HOME/Projects/niri-spaces/spaces/" 2>/dev/null || true
+fi
+
+# nosleep — keep-awake TUI (Rust). Prefer an existing git-managed checkout;
+# otherwise deploy the bundled snapshot. Built from source (cargo is in
+# packages.txt via rust); incremental, so rerunning with no changes is fast.
+if [ ! -d "$HOME/Projects/personal/nosleep" ]; then
+    msg "deploying nosleep -> ~/Projects/personal/"
+    cp -r "$BUNDLE/projects/nosleep" "$HOME/Projects/personal/"
+else
+    msg "~/Projects/personal/nosleep already present — leaving it (git-managed)"
+fi
+if command -v cargo >/dev/null; then
+    msg "building nosleep -> ~/.local/bin/nosleep ..."
+    ( cd "$HOME/Projects/personal/nosleep" \
+        && cargo build --release --locked \
+        && install -m0755 target/release/nosleep "$HOME/.local/bin/nosleep" ) \
+        || warn "nosleep build failed — build manually: cd ~/Projects/personal/nosleep && cargo build --release"
+else
+    warn "cargo not on PATH — nosleep not built (install rust, then rerun)"
 fi
 
 msg "running cli-tools-installer --all (terminal toolset, color-ghostty hook) ..."
@@ -175,7 +209,12 @@ mkdir -p "$HOME/.local/share/applications"
 for d in "$BUNDLE/configs/local-share/applications/"*.desktop; do
     [ -f "$d" ] || continue
     execline=$(grep -m1 '^Exec=' "$d" | cut -d= -f2-)
-    execbin=${execline%% *}
+    # Exec targets with spaces are quoted ("/path with spaces/bin" %F) — take the
+    # quoted string whole; otherwise the first word.
+    case $execline in
+        \"*) execbin=${execline#\"}; execbin=${execbin%%\"*} ;;
+        *)   execbin=${execline%% *} ;;
+    esac
     if command -v "$execbin" >/dev/null 2>&1 || [ -x "$execbin" ]; then
         cp -u "$d" "$HOME/.local/share/applications/"
     else

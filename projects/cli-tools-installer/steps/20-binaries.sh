@@ -220,9 +220,19 @@ if need carbonyl; then
     fi
 fi
 
-# various Rust CLI tools from opn shortcuts
-for t in croft qo surge pik zenith herdr sigye redthread critique; do
+# various Rust CLI tools from opn shortcuts — these ARE on crates.io under
+# their own names (verified: croft, pik, zenith, herdr, sigye).
+for t in croft pik zenith herdr sigye; do
     if need $t; then
         cargo_install_try $t || warn "$t unavailable (fallback failed)"
     fi
+done
+
+# qo, surge, redthread, critique are custom builds NOT on crates.io — the
+# same-name crates there are unrelated, name-squatted, or broken (surge 0.2.0 is
+# a music daemon with yanked deps; redthread 0.0.0 is a binary-less placeholder;
+# critique doesn't exist). Never `cargo install` these; they come pre-seeded
+# from the post-install bundle bin/ or /mnt/cachy-nfs/niri-post-setup/bin/.
+for t in qo surge redthread critique; do
+    need $t && warn "$t is a custom build (not on crates.io) — copy it from the post-install bundle bin/ or /mnt/cachy-nfs/niri-post-setup/bin/"
 done

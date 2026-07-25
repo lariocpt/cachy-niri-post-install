@@ -35,6 +35,10 @@ Then log out and pick the **Niri** session at the login screen. The display mana
   firefox (`~/.config/niri-spaces/`, edit `spaces/*.space` + `autostart`).
   The bundled `niri-spaces` CLI implements the README's `load/start/menu/list`
   (the original hardcoded script is preserved as `niri-spaces.orig` in the project).
+- **nosleep** (`~/Projects/personal/nosleep`) — keep-awake TUI ("I CAN'T GET NO
+  SLEEP"): holds ScreenSaver + logind inhibit locks exactly as long as it runs.
+  Built from the bundled source with cargo → `~/.local/bin/nosleep`; an existing
+  git checkout at that path is preferred over the snapshot.
 - **cli-tools-installer** (`~/Projects/personal/cli-tools-installer`) run with
   `--all`: the whole terminal toolset (yazi + previews, glow/mdfried/doxx/xan/xleak,
   fd/rg/fzf/zoxide/broot/starship, concord/siggy/slackatui, carbonyl, gitui, …)
