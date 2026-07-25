@@ -31,6 +31,7 @@ Then log out and pick the **Niri** session at the login screen. The display mana
   | `Super+Shift+H` | Agent Fleet menu (`lario-fleet --popup`) |
   | `Super+Shift+Y` | yazi in ghostty |
   | `Super+Ctrl+Shift+S` | niri-spaces menu |
+  | `Super+PageUp` / `Super+PageDown` | focus workspace up / down (add `Ctrl` to move the column with you) |
 - **niri-spaces** startup layout — ws 1: zenith + brave-origin; ws 2: terminal +
   firefox (`~/.config/niri-spaces/`, edit `spaces/*.space` + `autostart`).
   The bundled `niri-spaces` CLI implements the README's `load/start/menu/list`
