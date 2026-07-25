@@ -103,7 +103,7 @@ resvg, poppler, imagemagick, chafa, fd, ripgrep, fzf, zoxide, broot, less,
 micro, tree, lynx, rtorrent, starship, glow, mdfried, doxx, xan; GitHub/cargo
 fallbacks when not in repos: xleak, lazyenv, gitui, concord, siggy, slackatui,
 carbonyl, csvi, gittop, harlequin, croft, qo, surge, pik, herdr, sigye,
-redthread, critique; plus the color-ghostty theme rotation + shell hook and
+redthread; plus the color-ghostty theme rotation + shell hook and
 yazi base config.
 
 **Bundled prebuilt binaries** (`bin/` → `~/.local/bin`, newer-wins; see

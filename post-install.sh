@@ -166,14 +166,24 @@ if [ ! -d "$HOME/Projects/personal/nosleep" ]; then
 else
     msg "~/Projects/personal/nosleep already present — leaving it (git-managed)"
 fi
-if command -v cargo >/dev/null; then
+# Dead rustup shims in ~/.cargo/bin (rustup present, no default toolchain)
+# shadow the pacman toolchain and error out — probe for a cargo+rustc pair that
+# actually runs. cargo resolves rustc via PATH, so pin RUSTC past the shims too.
+CARGO=""
+if cargo --version >/dev/null 2>&1 && rustc --version >/dev/null 2>&1; then
+    CARGO=cargo
+elif /usr/bin/cargo --version >/dev/null 2>&1 && /usr/bin/rustc --version >/dev/null 2>&1; then
+    CARGO=/usr/bin/cargo
+    export RUSTC=/usr/bin/rustc
+fi
+if [ -n "$CARGO" ]; then
     msg "building nosleep -> ~/.local/bin/nosleep ..."
     ( cd "$HOME/Projects/personal/nosleep" \
-        && cargo build --release --locked \
+        && "$CARGO" build --release --locked \
         && install -m0755 target/release/nosleep "$HOME/.local/bin/nosleep" ) \
         || warn "nosleep build failed — build manually: cd ~/Projects/personal/nosleep && cargo build --release"
 else
-    warn "cargo not on PATH — nosleep not built (install rust, then rerun)"
+    warn "no working cargo on PATH — nosleep not built (install rust, then rerun)"
 fi
 
 msg "running cli-tools-installer --all (terminal toolset, color-ghostty hook) ..."

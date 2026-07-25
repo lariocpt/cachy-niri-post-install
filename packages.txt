@@ -39,7 +39,7 @@ ollama
 
 # --- dev tools ---
 # rust provides cargo, which cli-tools-installer needs for its source fallbacks
-# (concord/siggy/slackatui/xleak/critique/... and the rust-opn step).
+# (concord/siggy/slackatui/xleak/... and the rust-opn step).
 rust
 cmake
 ninja
@@ -49,6 +49,9 @@ vulkan-tools
 vulkan-headers
 spirv-headers
 python-huggingface-hub
+# kernel + headers must move together: headers alone drift ahead of the
+# installed kernel and DKMS then errors on the missing modules tree.
+linux-cachyos
 linux-cachyos-headers
 
 # --- virtualization ---
