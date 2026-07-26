@@ -137,12 +137,19 @@ toggle_discord() {
     fi
 }
 
+# Set the terminal/window title. Belt and braces alongside the per-agent Hermes skin:
+# the skin names the agent inside the banner, this names it in the window title and taskbar,
+# which stays visible after the banner has scrolled away. OSC 0 works in ghostty/xterm.
+set_title() { printf '\033]0;%s\007' "$1"; }
+
 chat_with() {
     local a="$1"
     if is_disabled "$a"; then echo "  $a is off — turn it on first."; return 1; fi
     if ! is_running "$a"; then echo "  $a is not running."; return 1; fi
     echo ""
     echo "Connecting to $a..."
+    set_title "⚕ $a"
+    trap 'set_title "lario-fleet"' RETURN
     # /opt/hermes/bin/hermes is the privilege-drop shim (root -> hermes user). Never wrap this
     # in `sh -lc`: a login shell re-sources /etc/profile and drops hermes off PATH.
     # -it is required; without a TTY the REPL exits immediately printing "Goodbye! ⚕".
@@ -159,6 +166,7 @@ if [ "${1:-}" == "--process-vision" ] || [ "${1:-}" == "--process-text" ]; then
     fi
     echo ""
     echo "Connecting to $AGENT..."
+    set_title "⚕ $AGENT"
     if [ "$1" == "--process-vision" ]; then
         docker cp "$2" "hermes-$AGENT:/tmp/snap.png"
         echo "Sending image and waiting for analysis..."
