@@ -97,12 +97,21 @@ pick_agent() {   # prints the chosen agent name on fd 3; menu goes to stderr
 
 # ─── actions ──────────────────────────────────────────────────────────────────────────────
 turn_on() {
-    local a="$1"
+    local a="$1" n yn
     if ! is_disabled "$a"; then echo "  $a is already on."; return; fi
-    if [ "$(active_count)" -ge "$MAX_ACTIVE" ]; then
-        echo "  Cap reached ($MAX_ACTIVE active). Turn one off first — more live agents means"
-        echo "  more cache eviction and slower replies for all of them."
-        return 1
+    n=$(active_count)
+    if [ "$n" -ge "$MAX_ACTIVE" ]; then
+        # Advisory, NOT a hard block. A hard block is a one-way door: start at 9 active with
+        # a cap of 3, turn one off by mistake, and you cannot undo it until six more are off.
+        echo "  $n agents are already active; the cap is $MAX_ACTIVE."
+        echo "  Each live agent holds a prompt prefix in a model slot. Past the slot count they"
+        echo "  evict each other, and an evicted agent pays a full cold prefill (~60s) instead"
+        echo "  of a cache hit (~2s)."
+        read -rp "  enable $a anyway? [y/N] " yn
+        case "$yn" in
+            y|Y|yes|YES) echo "  enabling over cap." ;;
+            *) echo "  left off."; return 1 ;;
+        esac
     fi
     rm -f "$AGENTS_REPO/hermes/$a/.disabled"
     echo "  enabling $a ..."
