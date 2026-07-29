@@ -11,13 +11,23 @@
 # a cache hit (~2s). Fewer live agents = more of them stay warm.
 #
 # `docker stop` alone is NOT enough — boot-fleet.sh runs `docker compose up -d` at every boot
-# and would bring it straight back. The durable switch is a `.disabled` marker file in the
-# agent's directory, which deploy/lib.sh:hermes_agents() filters on.
+# and would bring it straight back. The durable switch is a marker file named after the agent
+# in <repo>/.fleet-disabled/, which deploy/lib.sh:hermes_agents() filters on.
+#
+# That directory is at the repo ROOT, deliberately. Markers used to live at
+# hermes/<agent>/.disabled — inside the very directory bind-mounted into the agent as
+# /opt/data, which the agent can write to. An agent could delete its own kill-switch.
+# Moved 2026-07-29; see deploy/lib.sh for the full note.
 
 set -uo pipefail
 
 AGENTS_REPO="${AGENTS_REPO:-$HOME/Projects/personal/agents}"
-MAX_ACTIVE="${LARIO_FLEET_MAX_ACTIVE:-3}"   # refuse to enable more than this many at once
+DISABLED_DIR="$AGENTS_REPO/.fleet-disabled"
+# Advisory cap on concurrently-enabled agents. Must stay <= QWEN36_PARALLEL in
+# lario-llms/main-model.sh MINUS the non-agent consumers (opencode, cline). At 6 slots that
+# leaves 4. Raising this without raising the slot count reintroduces prefix eviction: an
+# evicted agent pays a ~68s cold prefill instead of a ~3s cache hit.
+MAX_ACTIVE="${LARIO_FLEET_MAX_ACTIVE:-4}"   # refuse to enable more than this many at once
 
 # ─── passthrough modes (unchanged behaviour) ──────────────────────────────────────────────
 if [ "${1:-}" == "--popup" ]; then
@@ -57,7 +67,9 @@ all_agents() {
         [ -f "$d/config.src.yaml" ] && basename "$d"
     done | sort
 }
-is_disabled() { [ -f "$AGENTS_REPO/hermes/$1/.disabled" ]; }
+# Checks BOTH locations: a marker left by an older checkout must keep the agent OFF, or
+# upgrading would silently re-enable exactly what someone meant to keep down.
+is_disabled() { [ -f "$DISABLED_DIR/$1" ] || [ -f "$AGENTS_REPO/hermes/$1/.disabled" ]; }
 is_running()  { [ "$(docker inspect -f '{{.State.Running}}' "hermes-$1" 2>/dev/null)" = "true" ]; }
 discord_on()  { grep -qE '^\s*enabled:\s*true\s*$' "$AGENTS_REPO/hermes/$1/config.src.yaml" 2>/dev/null; }
 active_count() { local n=0 a; for a in $(all_agents); do is_disabled "$a" || n=$((n+1)); done; echo "$n"; }
@@ -113,7 +125,8 @@ turn_on() {
             *) echo "  left off."; return 1 ;;
         esac
     fi
-    rm -f "$AGENTS_REPO/hermes/$a/.disabled"
+    # Clear BOTH locations — a stale legacy marker would otherwise keep it filtered out.
+    rm -f "$DISABLED_DIR/$a" "$AGENTS_REPO/hermes/$a/.disabled"
     echo "  enabling $a ..."
     ( cd "$AGENTS_REPO" && ./deploy/deploy-hermes.sh "$a" ) 2>&1 | tail -4
 }
@@ -121,10 +134,12 @@ turn_on() {
 turn_off() {
     local a="$1"
     if is_disabled "$a"; then echo "  $a is already off."; return; fi
-    touch "$AGENTS_REPO/hermes/$a/.disabled"
+    # Written OUTSIDE hermes/$a/ so the agent (which has /opt/data write access) cannot
+    # delete its own kill-switch.
+    mkdir -p "$DISABLED_DIR" && touch "$DISABLED_DIR/$a"
     echo "  stopping $a ..."
     docker stop "hermes-$a" >/dev/null 2>&1
-    echo "  $a is off (marker written; survives reboot)."
+    echo "  $a is off (marker written to .fleet-disabled/; survives reboot)."
 }
 
 toggle_discord() {
