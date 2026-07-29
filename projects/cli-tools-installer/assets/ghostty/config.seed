@@ -2,3 +2,9 @@
 # config before `color-ghostty` rewrites the theme. Edit freely — color-ghostty only
 # ever updates the `theme =` line below (it leaves the rest of this file untouched).
 theme = Catppuccin Mocha
+
+# Drag-selecting copies to the selection (primary) clipboard AND the system
+# clipboard. Ghostty's default (`true`) only writes the primary selection, so
+# Ctrl+V in another app pastes whatever was last explicitly copied instead of
+# what you just highlighted. Middle-click paste keeps working either way.
+copy-on-select = clipboard
